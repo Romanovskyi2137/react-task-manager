@@ -1,30 +1,27 @@
 
+export const AUTH_CONFIG = {
+    PWD_MIN_LENGTH: 6,
+    PWD_MAX_LENGTH: 12,
+    NAME_MAX_LENGTH: 16
+}
 
-
-function authValidator (username, password) {
-    const valid = {
-        usernameStatus: "not ok",
-        passwordStatus: "not ok",
-        overall: "not ok"
+function authValidator (username, password) { // both args are strings
+    const cleanName = username.trim();
+    const nameLength = cleanName.length;
+    const pwdLength = password.length;
+    const {
+        PWD_MIN_LENGTH, 
+        PWD_MAX_LENGTH, 
+        NAME_MAX_LENGTH
+    } = AUTH_CONFIG;
+    if ( !nameLength || !pwdLength ) {
+        throw new Error("pls fill username and password fields")
     }
-    if (username.length > 0) {
-        valid.usernameStatus = "ok"
-    } else {
-        throw new Error("Ім'я не може бути пустим!")
+    if ( nameLength > NAME_MAX_LENGTH ) {
+        throw new Error(`username must be up to ${NAME_MAX_LENGTH} characters`)
     }
-    if (password.length > 6 && password.length < 12) {
-        valid.passwordStatus = "ok"
+    if ( pwdLength < PWD_MIN_LENGTH || pwdLength > PWD_MAX_LENGTH ) {
+        throw new Error(`password must be between ${PWD_MIN_LENGTH} and ${PWD_MAX_LENGTH} characters`)
     }
-    if (valid.usernameStatus === "ok" && valid.passwordStatus === "ok") {
-        valid.overall = "ok"
-    }
-    if (password.length < 6) {
-        throw new Error("Пароль має бути від 6 до 12 символів!")
-    }
-    if (password.length > 12) {
-        throw new Error("Пароль має бути від 6 до 12 символів!")
-    }
-    return valid.overall
-};
-
-export default authValidator
+    return true
+}

@@ -19,16 +19,25 @@ function Registration () {
         try {
             e.preventDefault();
             const form = e.target;
-            if (form.password.value !== form.confirm_password.value) {
+            const username = form.username.value.trim();
+            const password = form.password.value;
+            const confirm_password = form.confirm_password.value;
+            if (password !== confirm_password) {
                 throw new Error ("Введіть однакові паролі!")
             };
-            const validStatus = authValidator(form.username.value, form.password.value);
-            const user = await AuthServise.registration(form.username.value, form.password.value)
-            form.username.value = "";
-            form.password.value = "";
-            if (user.status == 200) {
-                navigate("/login", {replace: true})
+            const validStatus = authValidator(username, password);
+            if (validStatus) {
+                const user = await AuthServise.registration(
+                    username, 
+                    password
+                )
+                form.username.value = "";
+                form.password.value = "";
+                if (user.status == 200) {
+                    navigate("/login", {replace: true})
+                }
             }
+            return
         } catch (e) {
             Notify.failure(e.message || e);
         }
